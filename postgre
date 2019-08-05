@@ -1,0 +1,21 @@
+'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'raven',
+        'PASSWORD':'Password',
+        'USER':'postgres',
+        'PORT':5432,
+        'HOST':'localhost',
+
+
+
+
+
+        $.ajax({
+              url:'/message/new_message/',
+              type:'GET ',
+              success:function(data){ 
+                alert(data.status);
+                if(data.status=='True'){
+                  document.getElementById('navbar').style.background='rgb(120, 183, 214)';
+                }
+              }, 
+            });

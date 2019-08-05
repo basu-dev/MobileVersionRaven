@@ -1,0 +1,33 @@
+{% extends 'base_view/base_view.html' %}
+{% block content %}
+<div class="card">
+        
+            {% if messages%}
+            {%for message in messages%}
+            <div class="card-body">
+
+            <div class="card mt-1">
+            <div class="card-title " >
+                  {%if message.receiver.profile.profile_picture%}
+                  <a href='/message/{{message.receiver.id}}/' style='text-decoration:none'><img class='rounded-circle' src='{{message.receiver.profile.profile_picture.url}}' height=40 width=40><span>{{message.receiver.first_name}} {{message.receiver.last_name}}
+                        {%if message.user.activestatus %}<span style='color:green'> (Active)</span>
+                        {%else%} 
+                        <span style='color:black'> (Inactive)</span>
+            </a>
+                {%endif%}
+                  {%else%}
+                  <a href='/message/{{message.receiver.id}}/' class='ml-4'>{{message.receiver.first_name}} {{message.receiver.last_name}}</a>          
+                  {%endif%}
+
+            </div>
+        </a>
+            <div class="card-text ml-4">{{message.get_sender.first_name}}: {{message.body}}</div>
+            </div>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+    {%else%}
+    <div class="card"><div class="title text-center" style='color:rgb(82, 142, 211)'> Add Friend And You Can See Your Friend Online And Start Conversation by searching for friend and messaging!!!</div></div>
+    {%endif%}
+{%endblock%}

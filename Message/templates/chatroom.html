@@ -1,0 +1,39 @@
+{%extends 'base_view/base_view.html'%}
+{%block content%}
+<div id='messagebox'>       
+    <div class='h5 card-title mt-1 mb-1' style='height:5vh; color:rgb(250, 250, 250)'>
+        <a href='#' style="text-decoration: none;width:50vh"> <img class='rounded-circle uskoimage' height=33 width=33 src='{{receiver.profile.profile_picture.url}}'>
+        {{receiver.first_name}} {{receiver.last_name}}</a>
+    </div>
+
+    {%if messages%}
+    <div class='card mb-5 cardd messagebox' style='overflow-y:scroll;height:70vh' >
+    {%for message in messages%}
+    {%if message.rcvr%}
+        <div class='card-title'>
+            <span><img id='uskophpoto' class ='rounded-circle' height=30 width = 30  src='{{message.user.profile.profile_picture.url}}'><span class='bluebo'><span  class='alert bg-info'>{{message.body}}</span></span> </span>
+            
+        </div>
+    {%else%}
+        <div class='card-title text-right'>
+            <span><span style='margin-top:6px' class='alert bg-success '>{{message.body}}</span><span><img  class ='rounded-circle my_image' height=30 width = 30  src='{{message.user.profile.profile_picture.url}}'> </span>  </span>
+        </div>
+                
+    {%endif%}
+                        
+    {%endfor%}
+    {%endif%}       
+    </div>      
+</div>  
+<div class="card fixed-bottom" style='bottom:1vh;height:7vh' >
+    <form class='form btn-group' action='/save_message/{{receiver.id}}/' method='POST'>
+        <textarea id='mymessagebox' name='message' class='form-control' cols=30 rows=1 style="border-radius:20px" ></textarea>
+        <button class='message_send' class='form-control' type='submit'>Send</button>
+        <input id='receiver_id' type='hidden' value='{{receiver.id}}'>
+        {%csrf_token%}
+    </form>
+</div>  
+{%endblock%}
+{%block script%} 
+
+{%endblock%}

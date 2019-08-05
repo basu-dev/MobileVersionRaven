@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <title>{{request.title}}</title>
+    <link rel='stylesheet' href='/static/css/bootstrap.min.css/'>
+    <link rel='stylesheet' href='/static/theme.css/'>
+   
+</head>
+<body style='overflow-x: hidden;height:100vh;width:100%;overflow-y:hidden;'>
+  <div class='row' >
+    <div class='col-lg-3 col-md-0 col-sm-0 col-xs-0'></div>
+    <div class='col-lg-6 col-md-12 col-sm-12 col-xs-12'>
+      <nav class='navbar  navbar-expand 'style='height:6vh;background-image: linear-gradient(to bottom right, rgb(23,43,245), rgb(25,250,250));' >
+        <a class='navbar-brand'id='navbar-brand' href='/' style='margin-right:20%;'><img height= 35 width=35 src='/static/hummingbird.svg'></a>
+        <ul class='navbar-nav mr-auto '>
+          <li class='nav-item mr-2 '>
+            <a class='nav-link' href='/setting/online_users/'><img  height=20 width=20 src='/static/users.svg/'></a>
+          </li>
+          <li class='nav-item  mr-2 ml-2'>
+            <a class='nav-link' href='/story/'><img  height=20 width=20 src='/static/home.svg/'></a>
+          </li>  
+          <li class="nav-item dropdown ml-3">
+              
+            <a class="nav-link dropdown-toggle " name='Notification' href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span id='notification_icon'><img  height=20 width=20 src='/static/notification.svg'></span>
+            </a>
+            <div class="dropdown-menu mr-0" id='notificationdiv' aria-labelledby="navbarDropdown">
+              {% if request.notification %}
+              {% for notification in request.notification %}
+              <a class="dropdown-item"  href="{{notification.url}}">{{notification.body}}</a>
+              <div class="dropdown-divider"></div>
+              {%endfor%}
+              {%else%}
+              
+              no notification
+              {%endif%}  </div>  
+          </li>                                                                               
+        </ul>
+        <ul clas='navbar-nav ml-auto' style='list-style: none;'>
+          <li class='nav-item'>
+            <a class='nav-link mt-3 mr-3' href='/setting/'><img  height=20 width=20 src='/static/user.svg/'></a>
+          </li>
+        </ul>
+      </nav>
+         {% block content %}
+         {%endblock %}
+  </div>
+  <div class='col-lg-3 col-md-0 col-sm-0 col-xs-0'></div>
+  </div>  
+          
+    <script src='/static/js/jquery.js/'></script>
+    <script src='/static/js/bootstrap.min.js/'></script>
+    {% block script %}
+    {%endblock%}
+    <!-- TOGGLE JAVASCRIPT -->
+    <script>
+      $(document).ready(function(){
+            $('#mysettingdiv').show();
+            $('#myprofilediv').hide();
+            $('#my_storiesdiv').hide();
+            $('#storiesdiv').show();
+            $('#profilebtn').click(function(){
+            $('#mysettingdiv').hide();
+            $('#myprofilediv').show();
+                  
+              });
+              $('#settingbtn').click(function(){
+                $('#myprofilediv').hide();
+                $('#mysettingdiv').show(); 
+              }); 
+              $('#stories').click(function(){
+                $('#my_storiesdiv').hide();
+                $('#storiesdiv').show();
+                  
+              });
+              $('#my_stories').click(function(){
+                  $('#storiesdiv').hide();
+                  $('#my_storiesdiv').show();
+              });
+        }
+      );
+    </script>
+      <!-- NOTIFICATION ON CLICK JAVASCRIPT -->
+    <script>
+      $(document).ready(function(){
+        $('#notification_icon').click(function(){
+          $(this).css('background','none')
+        });
+        $('.messagebox').ready(function(){
+          $(".messagebox").stop().animate({ scrollTop: $(".messagebox")[0].scrollHeight});
+        })
+        // CHATROOM MESSAGE SENDING
+          $('.form').submit(function(event){
+              event.preventDefault();
+              var message=$('mymessagebox').val();
+              $.ajax({
+                  url:this.action,
+                  type:this.method,
+                  data:{
+                      message:this.message.value,
+                      csrfmiddlewaretoken:this.csrfmiddlewaretoken.value,
+                  },
+                  success:function(respon){
+                      var img= $('.my_image').attr('src');
+                      var bb="<div class='card-title text-right'><span><span style='margin-top:6px' class='alert bg-success '>"+$('#mymessagebox').val()+"</span><span><img class ='rounded-circle ' height=30 width = 30  src="+img+"> </span>  </span></div>";
+                      console.log(respon.state);
+                      document.getElementById('mymessagebox').value='';
+                      $('.cardd').append(bb);
+                      $(".messagebox").stop().animate({ scrollTop: $(".messagebox")[0].scrollHeight});   
+                  }
+              });
+          });
+          
+      });
+    </script>
+      <!-- SETINTERVAL AND CHATROOM JAVASCRIPT -->
+    <script>
+      $(document).ready(function(){
+        
+          // SET INTERVER SECTION
+          var receiver_id=$('#receiver_id').val();
+          
+          setInterval(function(){
+          // NOTIFICATION START ...
+            $.ajax({
+            url:'/notifyme/',
+            type:'GET',
+            success:function(data){
+                if (data.state=='nochanged'){
+                  
+                }
+                else{
+                    
+                    var a = document.createElement('a');
+                    a.setAttribute('href',data.url);
+                    a.setAttribute('class','dropdown-item');
+                    a.innerHTML = data.body;
+                    $('#notificationdiv').prepend(a);
+                    document.getElementsById('notification_icon').style.background='rgb(12, 183, 214)';
+                    new Notification('from raven',{
+                      body:data.body,
+                    })
+                }
+            },
+        });
+        
+          // ONLINE CHECK 
+            $.ajax({
+              url:'/make_me_online/',
+              type:'GET',
+              success:function(data){
+              
+              },
+              });
+          // CHATROOM MESSAGE RECEIVING UPDATE  
+              var uskophoto= $('.uskoimage').attr('src');
+              $.ajax({
+                  url:'/new_message/'+receiver_id+'/',
+                  type:'GET',
+                  success:function(data){
+                      if(data.state=='unchanged'){
+                      }
+                      else{ 
+                        console.log('yes');
+                        $(".messagebox").stop().animate({ scrollTop: $(".messagebox")[0].scrollHeight});   
+                        var bw="<div class='card-title'><span><img  class='rounded-circle' height=30 width=30 src="+uskophoto+"><span></span><span><span class ='alert bg-info'>" +data.message+"</span>  </span></div>";
+                        $('.cardd').append(bw);
+                      }
+                  },
+  
+              });
+          },2000);
+          
+  
+      });
+    </script>
+    <script>
+      $(document).ready(function(){
+      $('.likeform').submit(function(event){
+          event.preventDefault();
+          $form = $(this);
+          $.ajax({
+              url:$form.attr('action'),
+              type:'POST',
+              data:{csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val(),},
+              success:function(data){
+                  id='#'+data.id+'_like';
+                  //alert(id);
+                  $(id).html(data.is_liked+'('+data.count+')');
+              
+              }
+          });
+      });
+      
+      $('.deleteform').submit(function(){
+          var check = confirm('Do you want to delete this post?')
+          if(check==true){
+          event.preventDefault();
+          
+          var id=$(this).attr('id');
+          
+          $.ajax({
+              url:$(this).attr('action'),
+              type:'POST',
+              data:{csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val()},
+              success:function(data){
+                  if (data.data=='True'){
+                  $('#'+id+'_delete').remove();
+                  };
+  
+        }  });}
+        else{
+            return false;
+        }
+      });
+      });
+  </script>
+  
+  
+</body>
+</html>

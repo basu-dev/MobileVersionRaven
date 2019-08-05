@@ -1,0 +1,17 @@
+.message_send{
+ background-image: linear-gradient(to bottom right, rgb(76, 66, 206), rgb(42, 163, 219));
+ height:30px;
+ width:70px;
+ border-radius:5px;
+ border-color:rgb(76, 66, 206);
+}
+.bluebox{
+    display:block;
+    clear:both;
+    background-color: blue;
+    color: white;
+    padding: 10px 5px;
+    display: block;
+    width:auto;
+    
+}

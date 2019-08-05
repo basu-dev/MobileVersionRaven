@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{request.title}}</title>
+    <link rel='stylesheet' href='/static/css/bootstrap.min.css/'>
+   
+</head>
+<body>
+  <div class='row'>
+      <div class='col-lg-3 col-md-0 col-sm-0 col-xs-0'></div>
+      <div class='col-lg-6 col-md-12 col-sm-12 col-xs-12'>
+            <div id='messagebox'>
+                    <div class='card' style='background-color:#d5dfe0'>
+                        <div class='card' style='background-color:cornflowerblue'>
+                            <div class='h5 card-title mt-1 mb-1' style='color:rgb(250, 250, 250)'>
+                               <a href='/profile/{{receiver.username}}/' style="text-decoration: none;"> <img class='rounded-circle' height=33 width=33 src='{{receiver.profile.profile_picture.url}}'>
+                                {{receiver.first_name}} {{receiver.last_name}}</a>
+                            </div>
+                        </div>
+                                <div class='card-body' style='height:400px;overflow-y:scroll;overflow-x:hidden'>
+                                        {%for message in messages%}
+                                        
+                                        <div class='card-text'>
+                                            {% if request.user.id is message.receiver%}
+                                            <img class ='rounded-circle' height=30 width = 30  src='{{receiver.profile.profile_picture.url}}'>  <div class='alert alert-primary mr-auto'>{{message.body}}</div>
+                                            {%else%}
+                                            <img class ='rounded-circle' height=30 width = 30  src='{{request.user.profile.profile_picture.url}}'><div class='alert alert-success ml-auto'>{{message.body}}</div>
+                                            
+                                            {%endif%}
+                                        </div><br>
+                                        {%endfor%}
+                                </div>
+                                <form class='form' action='/messages/{{receiver.id}}/' method='POST'>
+                                    <textarea name='message' class='mt-auto' cols=36 rows=1 style="border-radius:20px" ></textarea>
+                                    <button type='submit' class='btn btn-success btn-sm'>Send</button>
+                                {%csrf_token%}
+                            </form>
+                            </div>
+                            
+                       
+                    </div>    
+      </div>
+      <div class='col-lg-3 col-md-0 col-sm-0 col-xs-0'></div>
+  </div>  
+  <script src='/static/js/jquery.js/'></script>
+  <script src='/static/js/bootstrap.min.js/'></script>
+  <script>
+     $(document).ready(
+         function(){
+            $('#mysettingdiv').show();
+            $('#myprofilediv').hide();
+            $('#my_storiesdiv').hide();
+            $('#storiesdiv').show();
+             $('#profilebtn').click(function(){
+                $('#mysettingdiv').hide();
+                 $('#myprofilediv').show();
+                 
+             });
+             $('#settingbtn').click(function(){
+                $('#myprofilediv').hide();
+                $('#mysettingdiv').show(); 
+             }); 
+             $('#stories').click(function(){
+                $('#my_storiesdiv').hide();
+                $('#storiesdiv').show();
+                 
+             });
+             $('#my_stories').click(function(){
+                 $('#storiesdiv').hide();
+                 $('#my_storiesdiv').show();
+             });
+         }
+     );
+    </script>
+</body>
+</html>

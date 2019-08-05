@@ -1,0 +1,172 @@
+{%extends 'base_view/base_view.html'%}
+{%block content%}
+
+<table class='table table-striped'>
+        <tr>
+            <th><div id ='stories' >Stories</div></th>
+            <th><div id='my_stories' style='border-left:1px solid rgb(211, 199, 216);margin-left:30px;'><span class='ml-2'>My Stories</span></div></th>
+        </tr>
+    </table>
+
+
+    <div id='storiesdiv'>
+            
+                <div style='overflow-x:hidden;overflow-y:scroll;height:77vh'>
+                
+                {%for story in stories%}
+                <div class='card mb-2'>
+                    <div class = 'card-body'>
+                       <div class='card-title'>
+                            <img class ='rounded-circle mr-1 ml-2' height=30 width = 30  src='{{story.user.profile.profile_picture.url}}'><a href='/setting/'><b>{{story.user.first_name}} {{story.user.last_name}}</b> </a> added a post at {{story.date}}
+                       </div> 
+                       <div class = 'card-text text-justify'>
+                           {{story.body}}
+                       </div>
+                       
+                    </div>
+                    <div class='ml-2'>
+                        <p class ='ml-2'></p>
+                    </div>
+                    <div class="btn-group">
+                        <!-- story like form -->
+                    <form method='POST'  class='form-inline likeform' action='/story/like/{{story.id}}/'>
+                        
+                        <button type ='submit' id='{{story.id}}_like' class='btn btn-primary btn-sm form-control ml-3 mb-0' style='border-radius:8%'>{{story.is_liked}} ({{story.like.count}})</button>
+                        {%csrf_token%}
+                    </form>
+                    
+                    </div>
+                    <!-- story comment form -->
+                <form method='POST' action='/story/comment/{{story.id}}/'>
+                    <textarea name='comment' class='form-control mt-1 ml-2 mr-5 mb-0'cols=40  rows=1 style='border-radius:20px; border'></textarea>
+                    <button type ='submit' class='btn btn-primary btn-sm  ml-3 mr-4 mb-1 mt-1' style='border-radius:8%'>Comment</button>
+                    
+                    {%csrf_token%}
+                </form>
+                <!-- comment scroll div -->
+                {% if story.is_grt_thn_two%}
+                <div style='overflow-y:scroll;height:15vh'>
+                {% for comment in story.comment %}
+        
+                       <div class=' card'>
+                         <div class="card-title"><img class ='rounded-circle mt-2 ml-2' height=30 width = 30  src='{{comment.user.profile.profile_picture.url}}'>
+                        
+                            <a href='#' class='mt-2 h6'>{{comment.user.first_name}} </a><span> {{comment.body}}</span></div>
+                            
+                            
+                           
+                        </div>
+                        {%endfor%}
+                    </div>
+                    {%else%}
+                    <div>
+                    {% for comment in story.comment %}
+                
+                       <div class=' card'>
+                         <div class="card-title"><img class ='rounded-circle mt-2 ml-2' height=30 width = 30  src='{{comment.user.profile.profile_picture.url}}'>
+                        
+                            <a href='#' class='mt-2 h6'>{{comment.user.first_name}} </a><span> {{comment.body}}</span></div>
+                            
+                            
+    
+                    </div>
+                    {%endfor%}
+                       
+                       </div>
+                       {%endif%}
+                </div>
+                {%endfor%}
+                </div>
+               
+    </div>
+
+<div id='my_storiesdiv'>
+        
+            <div style='overflow-x:hidden;overflow-y:scroll;height:77vh'>
+            <div class='card mb-2' style='background-color:rgb(230,230,230)'>
+                <div class="card_title h5 text-center" style='color:primary' ) >Add to your Stories</div>
+                <!-- add story -->
+                <form method='POST' action='/story/add_story/'>    
+                <textarea class='ml-2 form control' rows=3 cols=41 style='border-radius:20px' name='add_story'></textarea>
+                <button  type='submit' class=' ml-3 mr-0 mb-1 add_story_btn btn btn-sm btn-primary'>Share</button>
+                {%csrf_token%}
+                </form>
+            </div>
+            <!-- my story div -->
+            {%for mero_story in mero_stories%}
+            <div class='card mb-2 mero_story' id='{{mero_story.id}}_delete'  >
+                <div class = 'card-body'>
+                   <div class='card-title'>
+                        <img class ='rounded-circle mr-1 ml-2' height=30 width = 30  src='{{request.user.profile.profile_picture.url}}'><a href='/setting/'><b>{{request.user.first_name}} {{request.user.last_name}}</b> </a> added a post at {{mero_story.date}}
+                   </div> 
+                   <div class = 'card-text text-justify'>
+                       {{mero_story.body}}
+                   </div>
+                   
+                </div>
+                <div class='ml-2'>
+                    <p class ='ml-2'></p>
+                </div>
+                <div class="btn-group">
+                    <!--my story like -->
+                <form method='POST'  class='form-inline likeform' action='/story/like/{{mero_story.id}}/'>
+                    <input type='hidden' name='redirect_to' value='/story/'>
+                    <button type ='submit' id='{{mero_story.id}}_like' class='btn btn-primary btn-sm form-control ml-3 mb-0' style='border-radius:8%'>{{mero_story.is_liked}} ({{mero_story.like.count}})</button>
+                    {%csrf_token%}
+                </form>
+                <!--my story delete -->
+                <form method='POST'  class='form-inline deleteform' action='/story/delete/{{mero_story.id}}/' id='{{mero_story.id}}'>
+                    <input type='hidden' name='redirect_to' value='/story/'>
+
+                    <button type ='submit' id='{{mero_stoyr.id}}_delete'  class='btn btn-primary btn-sm form-control ml-3 mb-0' style='border-radius:8%'>Delete</button>
+                {%csrf_token%}
+                </form>
+                </div>
+                <!--my story comment form -->
+            <form method='POST' action='/story/comment/{{mero_story.id}}/'>
+                <textarea name='comment' class='form-control mt-1 ml-3 mr-4 mb-0' cols=79 rows=1 style='border-radius:20px; border'></textarea>
+                <button type ='submit' class='btn btn-primary btn-sm  ml-3 mr-4 mb-1 mt-1' style='border-radius:8%'>Comment</button>
+                
+                {%csrf_token%}
+            </form>
+            <!-- comment display section -->
+            {% if mero_story.is_grt_thn_two%}
+            <div style='overflow-y:scroll;height:15vh'>
+            {% for comment in mero_story.comment %}
+            
+                   <div class=' card'>
+                     <div class="card-title"><img class ='rounded-circle mt-2 ml-2' height=30 width = 30  src='{{comment.user.profile.profile_picture.url}}'>
+                    
+                        <a href='#' class='mt-2 h6'>{{comment.user.first_name}} </a><span> {{comment.body}}</span></div>
+                        
+                        
+                       
+                    </div>
+                    {%endfor%}
+                </div>
+                {%else%}
+                <div>
+                {% for comment in mero_story.comment %}
+            
+                   <div class=' card'>
+                     <div class="card-title"><img class ='rounded-circle mt-2 ml-2' height=30 width = 30  src='{{comment.user.profile.profile_picture.url}}'>
+                    
+                        <a href='#' class='mt-2 h6'>{{comment.user.first_name}} </a><span> {{comment.body}}</span></div>
+                        
+                        
+
+                </div>
+                {%endfor%}
+                   
+                   </div>
+                   {%endif%}
+            </div>
+            {%endfor%}
+            </div>
+           
+</div>
+{%endblock%}
+
+{% block script %}
+
+{%endblock%}

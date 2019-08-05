@@ -1,0 +1,70 @@
+{%extends 'base_view/base_view.html'%}
+{%block content%}
+    <table class='table table-striped'>
+        <tr>
+            <th><div id ='profilebtn' >Profile</div></th>
+            <th><div id='settingbtn' style='border-left:1px solid rgb(211, 199, 216);margin-left:10px;'><span class='ml-2'>Settings</span></div></th>
+        </tr>
+    </table>
+<div id='myprofilediv'>
+<div class='card text-center'>
+        <div class="h4 card-title">{{request.user.first_name}}</div>
+        <div class="card-body">
+            <img class='rounded-circle' height=150 width=150 src='{{request.user.profile.profile_picture.url}}'>
+        </div>
+        <div class="card-title">
+            {{request.user.username}}   :{{request.onlinestatus}}
+        </div>
+    
+        <div class="card-text">
+           <b>{{request.user.first_name}} {{request.user.last_name}}</b> <br>
+            working at <b>{{request.user.profile.job}}.</b><br>
+            lives in <b>{{request.user.profile.address}}.</b><br>
+            <b>{{request.user.profile.age}}.</b> years old.<br>
+            contact no: <b>{{request.user.profile.contack_no}}.</b><br>
+            <div class='card'>
+                <div class=" h6 card-title">Bio:</div>
+                <div class="card-text">{{request.user.profile.bio}}</div>
+                
+            </div>
+            </div>
+            </div>
+            </div>
+<div id='mysettingdiv'>
+<div class="card "><span class='mt-1 mb-1 mr-5'>Hide me <span class='ml-4'><input {{request.status}}  id='active_status' type='checkbox'></span></span>
+   
+</div>
+<div class="card"><span class='mt-1 mb-1'>Block User</span></div>
+<div class="card"><span class='mt-1 mb-1'>Anonymous Mode</span></div>
+<form action='/logout/' method='POST'>
+    <div class="card"><button class='mt-1 mb-1' type='submit'>Logout</button></div>
+    {%csrf_token%}
+</form>
+
+<hr>
+<div class="card"><span>Help</span></div>
+<div class="card">Report</span></div>
+
+
+</div>            
+
+{%endblock%}
+{% block script%}
+<script>
+$(document).ready(function(){
+$('#active_status').change(function(){
+    var state=this.checked;
+  $.ajax({
+    url:'/update_status/',
+    type:'GET',
+    data:{
+        state:state
+    },
+    success:function(data){
+        console.log(data);
+    }
+  });
+})                                  
+});
+</script>
+{%endblock%}

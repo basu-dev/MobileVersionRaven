@@ -1,0 +1,58 @@
+{%extends 'base_view/base_view.html'%}
+{%block content%}
+    <table class='table table-striped'>
+        <tr>
+            <th><div id ='onlineuserbtn' >Online</div></th>
+            <th><div id='offlineuserbtn' style='border-left:1px solid rgb(211, 199, 216);margin-left:10px;'><span class='ml-2'>Offline</span></div></th>
+        </tr>
+    </table>
+<div id='onlineuserdiv'>
+        {%if active_friends%}
+        {%for active_friend in active_friends%}
+        <a href='/message/{{active_friend.id}}/' style='text-decoration: none'>
+            <div class="ml-2 mt-2 mb-2" style='color:rgb(28, 230, 72)'>
+            {{active_friend.first_name}} {{active_friend.last_name}}
+            </div>
+            </a>
+            {%endfor%}
+            {%endif%}
+</div>
+<div id='offlineuserdiv'>
+    {% if offline_friends%}
+        {%for offline_friend in offline_friends%}
+        <a href='/message/{{offline_friend.id}}/' style='text-decoration: none'>
+            <div class="ml-2 mt-2 mb-2">
+            {{offline_friend.first_name}} {{offline_friend.last_name}}
+            </div>
+            </a>
+            {%endfor%}
+           
+            {%endif%}
+
+</div>
+
+
+
+
+{%block script %}
+<script>
+    $(document).ready(function(){
+        $('#offlineuserdiv').hide();
+        $('#onlineuserdiv').show();
+        $('#offlineuserbtn').click(
+            function(){
+                $('#offlineuserdiv').show();
+                $('#onlineuserdiv').hide();
+            }
+        );
+        $('#onlineuserbtn').click(function(){
+            $('#offlineuserdiv').hide();
+            $('#onlineuserdiv').show();
+        });
+    });
+</script>
+
+{%endblock%}
+
+
+{%endblock%}
